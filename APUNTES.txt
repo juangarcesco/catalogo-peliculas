@@ -1,0 +1,23 @@
+python -m venv env
+python --version
+env\Scripts\activate
+pip --version
+env\Scripts\deactivate
+pip list
+python -m pip install --upgrade pip
+cls
+pip -- version
+pip install pylint
+pip install autopep8
+pip list
+python -m pip install --upgrade pip setuptools
+cls
+env\Scripts\deactivate.bat
+import tkinter as tk 
+crear carpeta catalogo-peliculas y dentro catalogo_peliculas.py
+env\Scripts\activate
+ls
+cd catalogo-peliculas
+cls
+python catalogo_peliculas.py (se ejecuta y abre una ventana)
+MINUTO 19:03
