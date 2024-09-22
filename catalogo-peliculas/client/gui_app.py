@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 
 def barra_menu(root):
     barra_menu = tk.Menu(root)
@@ -25,6 +26,7 @@ class Frame(tk.Frame):
 
         self.campos_pelicula()
         self.deshabilitar_campos()
+        self.tabla_peliculas()
     
 
     def campos_pelicula(self):
@@ -122,3 +124,41 @@ class Frame(tk.Frame):
     def guardar_datos(self):
 
         self.deshabilitar_campos()
+
+    def tabla_peliculas(self):
+        
+        self.tabla = ttk.Treeview(self, 
+        column = ('Nombre', 'Duracion','Genero'))
+        self.tabla.grid(row=4, column=0, columnspan=4)
+
+        self.tabla.heading('#0', text='ID')
+        self.tabla.heading('#0', text='NOMBRE')
+        self.tabla.heading('#0', text='DURACION (HORAS)')
+        self.tabla.heading('#0', text='GENERO')
+
+        self.tabla.insert('',0, text='1', 
+        values= ('Los vengadores', '2.35', 'Accion'))
+        
+
+
+        # Botones Editar
+        self.boton_editar = tk.Button(self, text="Editar")
+        self.boton_editar.config(width=20, 
+                                font=('Arial', 12, 'bold'),
+                                fg='#DAD5D6', 
+                                bg='#158645', 
+                                cursor='hand2', 
+                                activebackground='#35BD6F')
+        self.boton_editar.grid(row=5, column=0, padx=10, pady=10)
+
+
+
+        # Botones Eliminar        
+        self.boton_eliminar = tk.Button(self, text="Eliminar")
+        self.boton_cancelar.config(width=20, 
+                                font=('Arial', 12, 'bold'),
+                                fg='#DAD2D6', 
+                                bg='#BD152E', 
+                                cursor='hand2', 
+                                activebackground='#E15370')
+        self.boton_cancelar.grid(row=5, column=1, padx=10, pady=10)
