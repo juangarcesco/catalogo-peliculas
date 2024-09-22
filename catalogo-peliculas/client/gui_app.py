@@ -21,9 +21,11 @@ class Frame(tk.Frame):
         super().__init__(root, width=480, height=320)
         self.root = root
         self.pack()
-        #self.config(bg='green')
+
 
         self.campos_pelicula()
+        self.deshabilitar_campos()
+    
 
     def campos_pelicula(self):
         # Labels de cada campo
@@ -60,7 +62,7 @@ class Frame(tk.Frame):
         self.entry_genero.grid(row=2, column=1, padx=10, pady=10, columnspan=2)
 
         # Botones Nuevo
-        self.boton_nuevo = tk.Button(self, text="Nuevo")
+        self.boton_nuevo = tk.Button(self, text="Nuevo", command= self.habilitar_campos)
         self.boton_nuevo.config(width=20, 
                                 font=('Arial', 12, 'bold'),
                                 fg='#DAD5D6', 
@@ -71,7 +73,7 @@ class Frame(tk.Frame):
 
 
         # Botones Guadar
-        self.boton_guardar = tk.Button(self, text="Guardar")
+        self.boton_guardar = tk.Button(self, text="Guardar", command=self.guardar_datos)
         self.boton_guardar.config(width=20, 
                                 font=('Arial', 12, 'bold'),
                                 fg='#DAD5D6', 
@@ -81,8 +83,8 @@ class Frame(tk.Frame):
         self.boton_guardar.grid(row=3, column=1, padx=10, pady=10)
 
 
-        # Botones Cancelar
-        self.boton_cancelar = tk.Button(self, text="Cancelar")
+        # Botones Cancelar        
+        self.boton_cancelar = tk.Button(self, text="Cancelar", command= self.deshabilitar_campos)
         self.boton_cancelar.config(width=20, 
                                 font=('Arial', 12, 'bold'),
                                 fg='#DAD2D6', 
@@ -92,3 +94,31 @@ class Frame(tk.Frame):
         self.boton_cancelar.grid(row=3, column=2, padx=10, pady=10)
 
 
+    def habilitar_campos(self):
+        self.mi_nombre.set('')
+        self.mi_duracion.set('')
+        self.mi_genero.set('')
+
+        self.entry_nombre.config(state ='normal')
+        self.entry_duracion.config(state ='normal')
+        self.entry_genero.config(state ='normal')
+
+        self.boton_guardar.config(state='normal')
+        self.boton_cancelar.config(state='normal')
+
+    def deshabilitar_campos(self):
+        self.mi_nombre.set('')
+        self.mi_duracion.set('')
+        self.mi_genero.set('')
+
+        self.entry_nombre.config(state ='disabled')
+        self.entry_duracion.config(state ='disabled')
+        self.entry_genero.config(state ='disabled')
+
+        self.boton_guardar.config(state='disabled')
+        self.boton_cancelar.config(state='disabled')
+
+
+    def guardar_datos(self):
+
+        self.deshabilitar_campos()
