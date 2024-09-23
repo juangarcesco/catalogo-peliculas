@@ -1,6 +1,7 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from model.pelicula_dao import crear_tabla, borrar_tabla
+from model.pelicula_dao import Pelicula, guardar, listar, editar, eliminar
 
 def barra_menu(root):
     barra_menu = tk.Menu(root)
@@ -22,10 +23,10 @@ class Frame(tk.Frame):
     def __init__(self, root = None):
         super().__init__(root, width=480, height=320)
         self.root = root
-        self.pack()
-
-
+        self.pack()     
         self.campos_pelicula()
+
+        self.id_pelicula = None
         self.deshabilitar_campos()
         self.tabla_peliculas()
     
@@ -110,6 +111,7 @@ class Frame(tk.Frame):
         self.boton_cancelar.config(state='normal')
 
     def deshabilitar_campos(self):
+        self.id_pelicula = None
         self.mi_nombre.set('')
         self.mi_duracion.set('')
         self.mi_genero.set('')
@@ -124,26 +126,53 @@ class Frame(tk.Frame):
 
     def guardar_datos(self):
 
+        pelicula = Pelicula(
+            self.mi_nombre.get(),
+            self.mi_duracion.get(),
+            self.mi_genero.get(),
+        )
+
+        if self.id_pelicula == None:
+            guardar(pelicula)
+        
+        else:
+            editar(pelicula, self.id_pelicula)
+
+        
+        self.tabla_peliculas()
+
         self.deshabilitar_campos()
 
     def tabla_peliculas(self):
+
+        #Recuperar la lista de peliculas
+        self.lista_peliculas = listar()
+        self.lista_peliculas.reverse()
+
         
         self.tabla = ttk.Treeview(self, 
         column = ('Nombre', 'Duracion','Genero'))
         self.tabla.grid(row=4, column=0, columnspan=4)
 
-        self.tabla.heading('#0', text='ID')
-        self.tabla.heading('#0', text='NOMBRE')
-        self.tabla.heading('#0', text='DURACION (HORAS)')
-        self.tabla.heading('#0', text='GENERO')
+        # Scrollbar para la tabla si excede 10 registros
+        self.scroll = ttk.Scrollbar(self,
+        orient = 'vertical', command = self.tabla.yview)
+        self.scroll.grid(row = 4, column = 4, sticky = 'nse')
+        self.tabla.configure(yscrollcommand = self.scroll.set)
 
-        self.tabla.insert('',0, text='1', 
-        values= ('Los vengadores', '2.35', 'Accion'))
-        
+        self.tabla.heading('#0', text='ID')
+        self.tabla.heading('#1', text='NOMBRE')
+        self.tabla.heading('#2', text='DURACIÓN')
+        self.tabla.heading('#3', text='GENERO')
+
+        # Iterar la lista de peliculas
+        for p in self.lista_peliculas:
+            self.tabla.insert('',0, text=p[0], 
+            values = (p[1], p[2], p[3]))    
 
 
         # Botones Editar
-        self.boton_editar = tk.Button(self, text="Editar")
+        self.boton_editar = tk.Button(self, text="Editar", command=self.editar_datos)
         self.boton_editar.config(width=20, 
                                 font=('Arial', 12, 'bold'),
                                 fg='#DAD5D6', 
@@ -155,11 +184,43 @@ class Frame(tk.Frame):
 
 
         # Botones Eliminar        
-        self.boton_eliminar = tk.Button(self, text="Eliminar")
-        self.boton_cancelar.config(width=20, 
+        self.boton_eliminar = tk.Button(self, text="Eliminar", command=self.eliminar_datos)
+        self.boton_eliminar.config(width=20, 
                                 font=('Arial', 12, 'bold'),
                                 fg='#DAD2D6', 
                                 bg='#BD152E', 
                                 cursor='hand2', 
                                 activebackground='#E15370')
-        self.boton_cancelar.grid(row=5, column=1, padx=10, pady=10)
+        self.boton_eliminar.grid(row=5, column=1, padx=10, pady=10)
+
+    def editar_datos(self):
+        try:
+            self.id_pelicula = self.tabla.item(self.tabla.selection())['text']
+            self.nombre_pelicula = self.tabla.item(
+                self.tabla.selection())['values'][0]
+            self.duracion_pelicula = self.tabla.item(
+                self.tabla.selection())['values'][1]
+            self.genero_pelicula = self.tabla.item(
+                self.tabla.selection())['values'][2]
+            
+            self.habilitar_campos()
+
+            self.entry_nombre.insert(0, self.nombre_pelicula)
+            self.entry_duracion.insert(0, self.duracion_pelicula)
+            self.entry_genero.insert(0, self.genero_pelicula)
+            
+        except:
+            titulo = 'Edición de datos'
+            mensaje = 'No ha seleccionado nigun registro'
+            messagebox.showerror(titulo, mensaje)
+
+    def eliminar_datos(self):
+        try:
+            self.id_pelicula = self.tabla.item(self.tabla.selection())['text']
+            eliminar(self.id_pelicula)
+            self.tabla_peliculas()
+            self.id_pelicula = None
+        except:
+            titulo = 'Eliminar un Registro'
+            mensaje = 'No ha seleccionado nigun registro'
+            messagebox.showerror(titulo, mensaje)
